@@ -17,9 +17,10 @@ public class Gra extends ApplicationAdapter {
 	private Texture carrot;
 	private Texture chips;
 	private Texture wood;
-	private Collision Obiekt1;
+	private Collision Koszyk;
 	private Collision BG;
-	
+	private Collision Jablko;
+
 	@Override
 	public void create () {
 		basket = new Texture("basket.png");
@@ -30,12 +31,18 @@ public class Gra extends ApplicationAdapter {
 		carrot = new Texture("carrot.png");
 		chips = new Texture("chips.png");
 		wood = new Texture("wood.png");
-
 		batch = new SpriteBatch();
-		Obiekt1 = new Collision(basket);
+		Koszyk = new Collision(basket);
 		BG = new Collision(bg);
-		Obiekt1.x = 50;
-		Obiekt1.y = 100;
+		Jablko	= new Collision(apple);
+		Koszyk.x = 50;
+		Koszyk.y = 100;
+		Jablko.x = 300;
+		Jablko.y = 100;
+		Koszyk.height = Koszyk.getTexture().getHeight();
+		Koszyk.width = Koszyk.getTexture().getWidth();
+		Jablko.height = Koszyk.getTexture().getHeight();
+		Jablko.width = Koszyk.getTexture().getWidth();
 	}
 
 	public void Background()
@@ -50,7 +57,8 @@ public class Gra extends ApplicationAdapter {
 		update();
 		Background();
 		batch.begin();
-		batch.draw(Obiekt1.getTexture(), Obiekt1.x, Obiekt1.y);
+		batch.draw(Koszyk.getTexture(), Koszyk.x, Koszyk.y);
+		batch.draw(Jablko.getTexture(), Jablko.x, Jablko.y);
 		batch.end();
 	}
 
@@ -58,13 +66,19 @@ public class Gra extends ApplicationAdapter {
 	{
 		if(Gdx.input.isKeyPressed(Input.Keys.A))
 		{
-			Obiekt1.x -=10;
+			Koszyk.x -=10;
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.D))
 		{
-			Obiekt1.x +=10;
+			Koszyk.x +=10;
 		}
+
+		if(Koszyk.overlaps(Jablko))
+		{
+			Gdx.app.exit();
+		}
+
 	}
 	
 	@Override
