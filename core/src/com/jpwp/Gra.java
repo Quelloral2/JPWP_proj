@@ -5,78 +5,143 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import org.graalvm.compiler.loop.MathUtil;
+
+import java.util.ArrayList;
 
 public class Gra extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private Texture basket;
-	private Texture apple;
-	private Texture banana;
 	private Texture bg;
-	private Texture burger;
-	private Texture carrot;
-	private Texture chips;
 	private Texture wood;
-	private Collision Koszyk;
-	private Collision BG;
-	private Collision Jablko;
+	private Collision koszyk;
+	private Collision Bg;
+	private Collision Wood;
+	private float timer;
+	private int score;
+	private int streak;
+	private int health = 3;
+	BitmapFont font;
+	ArrayList<Food> lista = new ArrayList<>();
+	ArrayList<Food> remov = new ArrayList<>();
+	Texture[] good, bad;
 
 	@Override
 	public void create () {
+		font = new BitmapFont();
 		basket = new Texture("basket.png");
-		apple = new Texture("apple.png");
-		banana = new Texture("banana.png");
 		bg = new Texture("bg.png");
-		burger = new Texture("burger.png");
-		carrot = new Texture("carrot.png");
-		chips = new Texture("chips.png");
 		wood = new Texture("wood.png");
+		good = new Texture[]{new Texture("apple.png"), new Texture("banana.png"), new Texture("carrot.png") };
+		bad = new Texture[]{new Texture("burger.png"), new Texture("chips.png") };
 		batch = new SpriteBatch();
-		Koszyk = new Collision(basket);
-		BG = new Collision(bg);
-		Jablko	= new Collision(apple);
-		Koszyk.x = 50;
-		Koszyk.y = 100;
-		Jablko.x = 300;
-		Jablko.y = 100;
-		Koszyk.height = Koszyk.getTexture().getHeight();
-		Koszyk.width = Koszyk.getTexture().getWidth();
-		Jablko.height = Koszyk.getTexture().getHeight();
-		Jablko.width = Koszyk.getTexture().getWidth();
+		koszyk = new Collision(basket);
+		Bg = new Collision(bg);
+		Wood = new Collision(wood, 0, -520);
+		koszyk.x = 640-(koszyk.width/2);
+		koszyk.y = 100;
 	}
 
-	public void Background()
+	public void background()
 	{
 		batch.begin();
-		batch.draw(BG.getTexture(), 0, 0);
+		Bg.draw(batch);
+		batch.end();
+
+	}
+	public void scoreboard()
+	{
+		batch.begin();
+		Wood.draw(batch);
 		batch.end();
 	}
+
+	public void over()
+	{
+		for (int i = 0; i < lista.size(); i++) {
+
+			if(lista.get(i).y < 0)
+			{
+				remov.add(lista.get(i));
+				if(lista.get(i).healthy)
+				{
+					streak = 0;
+				}
+			}
+
+
+			if(lista.get(i).overlaps(koszyk))
+			{
+				remov.add(lista.get(i));
+				if(lista.get(i).healthy) {
+					score++;
+					streak++;
+					if (streak > 3)
+					{
+						score++;
+					}
+				}
+				else
+				{
+					streak = 0;
+					health--;
+				}
+			}
+		}
+		lista.removeAll(remov);
+		remov.clear();
+	}
+
 
 	@Override
 	public void render () {
+		over();
 		update();
-		Background();
+		background();
+		scoreboard();
 		batch.begin();
-		batch.draw(Koszyk.getTexture(), Koszyk.x, Koszyk.y);
-		batch.draw(Jablko.getTexture(), Jablko.x, Jablko.y);
+		koszyk.draw(batch);
+		for (int i = 0; i < lista.size(); i++) {
+			lista.get(i).draw(batch);
+		}
+		font.draw(batch, "Wynik: "+score+"", 50, 50);
+		font.draw(batch, "Zycia: "+health+"", 200, 50);
+
+
 		batch.end();
+
 	}
 
 	private void update()
 	{
-		if(Gdx.input.isKeyPressed(Input.Keys.A))
+		if(Gdx.input.isKeyPressed(Input.Keys.A) && koszyk.x > 0 )
 		{
-			Koszyk.x -=10;
+			koszyk.x -=15;
 		}
 
-		if(Gdx.input.isKeyPressed(Input.Keys.D))
+		if(Gdx.input.isKeyPressed(Input.Keys.D) && koszyk.x < (1280-koszyk.width))
 		{
-			Koszyk.x +=10;
+			koszyk.x +=15;
 		}
 
-		if(Koszyk.overlaps(Jablko))
+		timer += Gdx.graphics.getDeltaTime();
+		if(timer > 1)
 		{
-			Gdx.app.exit();
+			boolean healthy = MathUtils.random(100 ) <= 66;
+			Texture texture = null;
+			if(healthy)
+			{
+				texture = good[MathUtils.random(good.length-1)];
+			}
+			else
+			{
+				texture = bad[MathUtils.random(bad.length-1)];
+			}
+			lista.add(new Food (texture, healthy));
+			timer = 0;
 		}
 
 	}
@@ -85,12 +150,7 @@ public class Gra extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		basket.dispose();
-		apple .dispose();
-		banana.dispose();
 		bg.dispose();
-		burger.dispose();
-		carrot.dispose();
-		chips.dispose();
 		wood.dispose();
 	}
 }
