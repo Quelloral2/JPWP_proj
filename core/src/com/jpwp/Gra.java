@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import org.graalvm.compiler.loop.MathUtil;
 
 import java.util.ArrayList;
@@ -20,14 +24,22 @@ public class Gra extends ApplicationAdapter {
 	private Collision koszyk;
 	private Collision Bg;
 	private Collision Wood;
+	private Collision screen;
+	private State state = State.run;
 	private float timer;
-	private int score;
-	private int streak;
+	private int score = 0;
+	private int streak = 0;
 	private int health = 3;
+	private int level = 1;
+	private double predkosc = 1;
+	private int total_score;
+	private double czas = 1.5;
+	private double move = 15;
 	BitmapFont font;
 	ArrayList<Food> lista = new ArrayList<>();
 	ArrayList<Food> remov = new ArrayList<>();
 	Texture[] good, bad;
+	Stage stage;
 
 	@Override
 	public void create () {
@@ -40,6 +52,7 @@ public class Gra extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		koszyk = new Collision(basket);
 		Bg = new Collision(bg);
+		screen = new Collision(wood, 0, 100);
 		Wood = new Collision(wood, 0, -520);
 		koszyk.x = 640-(koszyk.width/2);
 		koszyk.y = 100;
@@ -59,16 +72,54 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 	}
 
+	public enum State {
+		pause,
+		run,
+		resume,
+		end
+	}
+
+	public void menu()
+	{
+		batch.begin();
+		screen.draw(batch);
+		batch.end();
+	}
+
+	public void levels()
+	{
+		Food.predkosc += 1;
+		czas = czas/1.1;
+		level++;
+		move += 2;
+		menu();
+	}
+
+	public void ending()
+	{
+		batch.begin();
+		screen.draw(batch);
+		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
+		font.draw(batch, "Zycia: "+ 0 +"", 200, 50);
+		batch.end();
+
+	}
+
 	public void over()
 	{
 		for (int i = 0; i < lista.size(); i++) {
 
-			if(lista.get(i).y < 0)
+			if(lista.get(i).y < 100)
 			{
 				remov.add(lista.get(i));
 				if(lista.get(i).healthy)
 				{
 					streak = 0;
+					health--;
+					if(health <= 0)
+					{
+						ending();
+					}
 				}
 			}
 
@@ -82,6 +133,12 @@ public class Gra extends ApplicationAdapter {
 					if (streak > 3)
 					{
 						score++;
+						total_score++;
+					}
+					if (score>20)
+					{
+						score = 0;
+						levels();
 					}
 				}
 				else
@@ -98,40 +155,66 @@ public class Gra extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		over();
-		update();
-		background();
-		scoreboard();
-		batch.begin();
-		koszyk.draw(batch);
-		for (int i = 0; i < lista.size(); i++) {
-			lista.get(i).draw(batch);
+		switch (state)
+		{
+			case run:
+				over();
+				update();
+				background();
+				scoreboard();
+				batch.begin();
+				koszyk.draw(batch);
+				for (int i = 0; i < lista.size(); i++) {
+					lista.get(i).draw(batch);
+				}
+				font.draw(batch, "Wynik: "+score+"", 50, 50);
+				font.draw(batch, "Zycia: "+health+"", 200, 50);
+				font.draw(batch, "Poziom: "+level+"", 350, 50);
+				batch.end();
+				if(health <= 0)
+				{
+					this.state = State.end;
+				}
+				break;
+
+			case pause:
+				update();
+				background();
+				scoreboard();
+				menu();
+				break;
+
+			case end:
+				ending();
+				break;
+
+			case resume:
+				this.state = State.run;
+				break;
+
+			default:
+				this.state = State.pause;
+				break;
 		}
-		font.draw(batch, "Wynik: "+score+"", 50, 50);
-		font.draw(batch, "Zycia: "+health+"", 200, 50);
-
-
-		batch.end();
-
 	}
 
 	private void update()
 	{
 		if(Gdx.input.isKeyPressed(Input.Keys.A) && koszyk.x > 0 )
 		{
-			koszyk.x -=15;
+			koszyk.x -= move;
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.D) && koszyk.x < (1280-koszyk.width))
 		{
-			koszyk.x +=15;
+			koszyk.x += move;
 		}
 
 		timer += Gdx.graphics.getDeltaTime();
-		if(timer > 1)
+		if(timer > czas)
 		{
 			boolean healthy = MathUtils.random(100 ) <= 66;
-			Texture texture = null;
+			Texture texture;
 			if(healthy)
 			{
 				texture = good[MathUtils.random(good.length-1)];

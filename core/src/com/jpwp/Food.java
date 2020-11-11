@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class Food extends Collision{
 
+    public static float predkosc = 1;
     public boolean healthy;
 
     public Food(Texture texture, boolean healthy)
@@ -18,7 +19,7 @@ public class Food extends Collision{
 
     @Override
     public void draw(SpriteBatch batch) {
-        y--;
+        y = y - predkosc;
         super.draw(batch);
     }
 }
