@@ -3,6 +3,7 @@ package com.jpwp;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -67,7 +68,8 @@ public class Gra extends ApplicationAdapter {
 	public enum State {
 		pause,
 		run,
-		resume,
+		next,
+		menu,
 		end
 	}
 
@@ -75,16 +77,32 @@ public class Gra extends ApplicationAdapter {
 	{
 		batch.begin();
 		screen.draw(batch);
+		font.draw(batch, "Gra edukacyjna", 600, 600);
+		font.draw(batch, "Zdrowe zywienie", 600, 570);
 		batch.end();
 	}
 
-	public void levels()
+	public void pauza()
 	{
+		batch.begin();
+		screen.draw(batch);
+		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
+		font.draw(batch, "Zycia: "+ 0 +"", 550, 600);
+		batch.end();
+	}
+
+	public void next_level()
+	{
+		score = 0;
 		Food.predkosc += 1;
 		czas = czas/1.1;
 		level++;
 		move += 2;
-		menu();
+		batch.begin();
+		screen.draw(batch);
+		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
+		font.draw(batch, "Zycia: "+ 0 +"", 550, 600);
+		batch.end();
 	}
 
 	public void ending()
@@ -92,7 +110,6 @@ public class Gra extends ApplicationAdapter {
 		batch.begin();
 		screen.draw(batch);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
-		font.draw(batch, "Zycia: "+ 0 +"", 200, 50);
 		batch.end();
 
 	}
@@ -108,10 +125,6 @@ public class Gra extends ApplicationAdapter {
 				{
 					streak = 0;
 					health--;
-					if(health <= 0)
-					{
-						ending();
-					}
 				}
 			}
 
@@ -126,11 +139,6 @@ public class Gra extends ApplicationAdapter {
 					{
 						score++;
 						total_score++;
-					}
-					if (score>20)
-					{
-						score = 0;
-						levels();
 					}
 				}
 				else
@@ -147,6 +155,8 @@ public class Gra extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		Gdx.gl.glClearColor( 0, 1, 0, 1 );
+		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		switch (state)
 		{
 			case run:
@@ -167,25 +177,32 @@ public class Gra extends ApplicationAdapter {
 				{
 					this.state = State.end;
 				}
+				else if (score>20)
+				{
+					this.state = State.next;
+				}
 				break;
 
 			case pause:
 				update();
 				background();
 				scoreboard();
-				menu();
+				pauza();
 				break;
 
 			case end:
 				ending();
 				break;
 
-			case resume:
-				this.state = State.run;
+			case menu:
+				menu();
 				break;
 
+			case next:
+				next_level();
+				break;
 			default:
-				this.state = State.pause;
+				this.state = State.menu;
 				break;
 		}
 	}
