@@ -3,16 +3,10 @@ package com.jpwp;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import org.graalvm.compiler.loop.MathUtil;
 
 import java.util.ArrayList;
 
@@ -31,7 +25,6 @@ public class Gra extends ApplicationAdapter {
 	private int streak = 0;
 	private int health = 3;
 	private int level = 1;
-	private double predkosc = 1;
 	private int total_score;
 	private double czas = 1.5;
 	private double move = 15;
@@ -39,7 +32,6 @@ public class Gra extends ApplicationAdapter {
 	ArrayList<Food> lista = new ArrayList<>();
 	ArrayList<Food> remov = new ArrayList<>();
 	Texture[] good, bad;
-	Stage stage;
 
 	@Override
 	public void create () {
