@@ -20,19 +20,23 @@ public class Gra extends ApplicationAdapter {
 	private Collision Bg;
 	private Collision Wood;
 	private Collision screen;
-	private State state = State.run;
 	private float timer;
-	private int score = 0;
-	private int streak = 0;
-	private int health = 3;
-	private int level = 1;
+	private int score;
+	public static int streak;
+	private int health;
+	public static int level;
 	private int total_score;
-	private double czas = 1.5;
-	private double move = 15;
+	public static double czas;
+	public static double move;
+	public static int state = 3;
 	BitmapFont font;
 	ArrayList<Food> lista = new ArrayList<>();
 	ArrayList<Food> remov = new ArrayList<>();
 	Texture[] good, bad;
+	Menu menu;
+	Pause pause;
+	Game game;
+	Nxtlvl next;
 
 	@Override
 	public void create () {
@@ -49,6 +53,10 @@ public class Gra extends ApplicationAdapter {
 		Wood = new Collision(wood, 0, -520);
 		koszyk.x = 640-(koszyk.width/2);
 		koszyk.y = 100;
+		menu = new Menu(wood);
+		pause = new Pause(wood);
+		game = new Game();
+		next = new Nxtlvl(wood);
 	}
 
 	public void background()
@@ -58,6 +66,19 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 
 	}
+
+	public void start()
+	{
+		score = 0;
+		streak = 0;
+		health = 3;
+		level = 1;
+		total_score = 0;
+		czas = 1.5;
+		move = 15;
+		Food.predkosc = 1;
+	}
+
 	public void scoreboard()
 	{
 		batch.begin();
@@ -65,18 +86,9 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 	}
 
-	public enum State {
-		pause,
-		run,
-		next,
-		menu,
-		end
-	}
-
 	public void menu()
 	{
 		batch.begin();
-		screen.draw(batch);
 		font.draw(batch, "Gra edukacyjna", 600, 600);
 		font.draw(batch, "Zdrowe zywienie", 600, 570);
 		batch.end();
@@ -85,33 +97,26 @@ public class Gra extends ApplicationAdapter {
 	public void pauza()
 	{
 		batch.begin();
-		screen.draw(batch);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
-		font.draw(batch, "Zycia: "+ 0 +"", 550, 600);
+		font.draw(batch, "Zycia: "+ health +"", 550, 600);
 		batch.end();
 	}
 
 	public void next_level()
 	{
 		score = 0;
-		Food.predkosc += 1;
-		czas = czas/1.1;
-		level++;
-		move += 2;
 		batch.begin();
-		screen.draw(batch);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
-		font.draw(batch, "Zycia: "+ 0 +"", 550, 600);
+		font.draw(batch, "Zycia: "+ health +"", 550, 600);
 		batch.end();
 	}
 
 	public void ending()
 	{
 		batch.begin();
-		screen.draw(batch);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
 		batch.end();
-
+		state = 6;
 	}
 
 	public void over()
@@ -135,6 +140,7 @@ public class Gra extends ApplicationAdapter {
 				if(lista.get(i).healthy) {
 					score++;
 					streak++;
+					total_score++;
 					if (streak > 3)
 					{
 						score++;
@@ -159,7 +165,7 @@ public class Gra extends ApplicationAdapter {
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		switch (state)
 		{
-			case run:
+			case 1:
 				over();
 				update();
 				background();
@@ -175,34 +181,53 @@ public class Gra extends ApplicationAdapter {
 				batch.end();
 				if(health <= 0)
 				{
-					this.state = State.end;
+					state = 5;
 				}
-				else if (score>20)
+				else if (score>1)
 				{
-					this.state = State.next;
+					state = 4;
 				}
+				game.draw();
+				Gdx.input.setInputProcessor(game);
+
 				break;
 
-			case pause:
-				update();
-				background();
-				scoreboard();
+			case 2:
+				pause.draw();
+				Gdx.input.setInputProcessor(pause);
 				pauza();
 				break;
 
-			case end:
-				ending();
-				break;
-
-			case menu:
+			case 3:
+				menu.draw();
+				Gdx.input.setInputProcessor(menu);
 				menu();
 				break;
 
-			case next:
+			case 4:
+				next.draw();
+				Gdx.input.setInputProcessor(next);
 				next_level();
+				remov.clear();
+				lista.clear();
+				break;
+
+			case 5:
+				menu.draw();
+				Gdx.input.setInputProcessor(menu);
+				ending();
+				remov.clear();
+				lista.clear();
+				break;
+
+			case 6:
+				start();
+				remov.clear();
+				lista.clear();
+				state = 1;
 				break;
 			default:
-				this.state = State.menu;
+				state = 3;
 				break;
 		}
 	}
