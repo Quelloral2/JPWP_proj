@@ -19,13 +19,12 @@ public class Gra extends ApplicationAdapter {
 	private Collision koszyk;
 	private Collision Bg;
 	private Collision Wood;
-	private Collision screen;
 	private float timer;
-	private int score;
+	public static int score;
 	public static int streak;
-	private int health;
+	public static int health;
 	public static int level;
-	private int total_score;
+	public static int total_score;
 	public static double czas;
 	public static double move;
 	public static int state = 3;
@@ -49,7 +48,6 @@ public class Gra extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		koszyk = new Collision(basket);
 		Bg = new Collision(bg);
-		screen = new Collision(wood, 0, 100);
 		Wood = new Collision(wood, 0, -520);
 		koszyk.x = 640-(koszyk.width/2);
 		koszyk.y = 100;
@@ -64,7 +62,6 @@ public class Gra extends ApplicationAdapter {
 		batch.begin();
 		Bg.draw(batch);
 		batch.end();
-
 	}
 
 	public void start()
@@ -86,22 +83,6 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 	}
 
-	public void menu()
-	{
-		batch.begin();
-		font.draw(batch, "Gra edukacyjna", 600, 600);
-		font.draw(batch, "Zdrowe zywienie", 600, 570);
-		batch.end();
-	}
-
-	public void pauza()
-	{
-		batch.begin();
-		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
-		font.draw(batch, "Zycia: "+ health +"", 550, 600);
-		batch.end();
-	}
-
 	public void next_level()
 	{
 		score = 0;
@@ -114,9 +95,8 @@ public class Gra extends ApplicationAdapter {
 	public void ending()
 	{
 		batch.begin();
-		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
+		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
 		batch.end();
-		state = 6;
 	}
 
 	public void over()
@@ -163,6 +143,7 @@ public class Gra extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor( 0, 1, 0, 1 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+
 		switch (state)
 		{
 			case 1:
@@ -179,6 +160,7 @@ public class Gra extends ApplicationAdapter {
 				font.draw(batch, "Zycia: "+health+"", 200, 50);
 				font.draw(batch, "Poziom: "+level+"", 350, 50);
 				batch.end();
+
 				if(health <= 0)
 				{
 					state = 5;
@@ -195,13 +177,11 @@ public class Gra extends ApplicationAdapter {
 			case 2:
 				pause.draw();
 				Gdx.input.setInputProcessor(pause);
-				pauza();
 				break;
 
 			case 3:
 				menu.draw();
 				Gdx.input.setInputProcessor(menu);
-				menu();
 				break;
 
 			case 4:
