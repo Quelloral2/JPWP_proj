@@ -86,15 +86,12 @@ public class Gra extends ApplicationAdapter {
 	public void next_level()
 	{
 		score = 0;
-		batch.begin();
-		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 600);
-		font.draw(batch, "Zycia: "+ health +"", 550, 600);
-		batch.end();
 	}
 
 	public void ending()
 	{
 		batch.begin();
+		font.draw(batch, "Ukończyłeś grę, gratulacje!", 600, 600);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
 		batch.end();
 	}
@@ -147,31 +144,45 @@ public class Gra extends ApplicationAdapter {
 		switch (state)
 		{
 			case 1:
-				over();
-				update();
-				background();
-				scoreboard();
-				batch.begin();
-				koszyk.draw(batch);
-				for (int i = 0; i < lista.size(); i++) {
-					lista.get(i).draw(batch);
-				}
-				font.draw(batch, "Wynik: "+score+"", 50, 50);
-				font.draw(batch, "Zycia: "+health+"", 200, 50);
-				font.draw(batch, "Poziom: "+level+"", 350, 50);
-				batch.end();
+				if (level <= 10)
+				{
+					over();
+					update();
+					background();
+					scoreboard();
+					batch.begin();
+					koszyk.draw(batch);
+					for (int i = 0; i < lista.size(); i++) {
+						lista.get(i).draw(batch);
+					}
+					font.draw(batch, "Wynik: "+score+"", 50, 50);
+					font.draw(batch, "Zycia: "+health+"", 200, 50);
+					font.draw(batch, "Poziom: "+level+"", 350, 50);
 
-				if(health <= 0)
+					batch.end();
+
+					if(health <= 0)
+					{
+						state = 5;
+					}
+					else if (score>19)
+					{
+						if(level < 10)
+						{
+							state = 4;
+						}
+						else
+						{
+							state = 5;
+						}
+					}
+					game.draw();
+					Gdx.input.setInputProcessor(game);
+				}
+				else
 				{
 					state = 5;
 				}
-				else if (score>1)
-				{
-					state = 4;
-				}
-				game.draw();
-				Gdx.input.setInputProcessor(game);
-
 				break;
 
 			case 2:

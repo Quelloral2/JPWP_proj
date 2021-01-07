@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class Nxtlvl extends Stage {
 
+    TextButton button4, button5, button6;
+
     public Nxtlvl(Texture texture)
     {
         Table table = new Table();
@@ -23,9 +25,9 @@ public class Nxtlvl extends Stage {
         Button button1 = new TextButton("Nastepny poziom",mySkin,"small");
         Button button2 = new TextButton("Nowa gra",mySkin,"small");
         Button button3 = new TextButton("Wyjdz",mySkin,"small");
-        Button button4 = new TextButton("Twoj wynik: "+Gra.total_score+"",mySkin,"small");
-        Button button5 = new TextButton("Zycia: "+ Gra.health +"",mySkin,"small");
-        Button button6 = new TextButton("Poziom: "+ Gra.level +"",mySkin,"small");
+        button4 = new TextButton("Twoj wynik: "+Gra.total_score+"",mySkin,"small");
+        button5 = new TextButton("Zycia: "+ Gra.health +"",mySkin,"small");
+        button6 = new TextButton("Poziom: "+ Gra.level +"",mySkin,"small");
         button1.setSize(200,50);
         button1.setPosition(540,400);
         button2.setSize(100,50);
@@ -42,18 +44,26 @@ public class Nxtlvl extends Stage {
         {
             public void changed (ChangeEvent event, Actor actor)
             {
-                Gra.state = 1;
-                Food.predkosc += 1;
-                Gra.czas = Gra.czas/1.1;
-                Gra.level++;
-                Gra.move += 2;
-                Gra.streak = 0;
+                if (Gra.level < 10 )
+                {
+                    Gra.state = 1;
+                    Food.predkosc += 1;
+                    Gra.czas = Gra.czas/1.1;
+                    Gra.level++;
+                    Gra.move += 2;
+                    Gra.streak = 0;
+                }
+                else
+                {
+                    Gra.state = 5;
+                }
             }
         });
         button2.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
             {
+
                 Gra.state = 6;
             }
         });
@@ -74,6 +84,9 @@ public class Nxtlvl extends Stage {
     @Override
     public void draw()
     {
+        button4.setText("Twoj wynik: "+Gra.total_score);
+        button5.setText("Zycia: "+ Gra.health);
+        button6.setText("Poziom: "+ Gra.level);
         super.draw();
     }
 
