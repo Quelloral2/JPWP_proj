@@ -37,8 +37,11 @@ public class Gra extends ApplicationAdapter {
 	Game game;
 	Nxtlvl next;
 
+	/**
+	 * metoda do zainicjalizowania wszystkich tekstur uzywanych podczas gry
+	 */
 	@Override
-	public void create () {
+    public void create () {
 		font = new BitmapFont();
 		basket = new Texture("basket.png");
 		bg = new Texture("bg.png");
@@ -57,6 +60,9 @@ public class Gra extends ApplicationAdapter {
 		next = new Nxtlvl(wood);
 	}
 
+	/**
+	 * narysowanie tla
+	 */
 	public void background()
 	{
 		batch.begin();
@@ -64,6 +70,9 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 	}
 
+	/**
+	 * ustawienie startowych parametrow do gry
+	 */
 	public void start()
 	{
 		score = 0;
@@ -76,6 +85,9 @@ public class Gra extends ApplicationAdapter {
 		Food.predkosc = 1;
 	}
 
+	/**
+	 * narysowanie tla do tabeli z wynikami gracza
+	 */
 	public void scoreboard()
 	{
 		batch.begin();
@@ -83,24 +95,33 @@ public class Gra extends ApplicationAdapter {
 		batch.end();
 	}
 
+	/**
+	 * ustawienie wyniku z aktualnego poziomu na 0 przy przejsciu na nastepny poziom
+	 */
 	public void next_level()
 	{
 		score = 0;
 	}
 
+	/**
+	 * wyswietlenie informacji o zakonczeniu gry
+	 */
 	public void ending()
 	{
 		batch.begin();
-		font.draw(batch, "Ukończyłeś grę, gratulacje!", 600, 600);
+		font.draw(batch, "Ukonczyles gre, gratulacje!", 600, 600);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
 		batch.end();
 	}
 
+	/**
+	 * wykrywanie kolizji pomiedzy spadajacymi obiektami a koszykiem do zbierania ich
+	 */
 	public void over()
 	{
 		for (int i = 0; i < lista.size(); i++) {
 
-			if(lista.get(i).y < 100)
+			if(lista.get(i).y < 100) //sprawdzenie czy obiekt wypadl poza mape
 			{
 				remov.add(lista.get(i));
 				if(lista.get(i).healthy)
@@ -111,7 +132,7 @@ public class Gra extends ApplicationAdapter {
 			}
 
 
-			if(lista.get(i).overlaps(koszyk))
+			if(lista.get(i).overlaps(koszyk)) //sprawdzenie kolizji obiektu z koszykiem
 			{
 				remov.add(lista.get(i));
 				if(lista.get(i).healthy) {
@@ -135,7 +156,10 @@ public class Gra extends ApplicationAdapter {
 		remov.clear();
 	}
 
-
+	/**
+	 * glowna metoda gry odpowiadajaca za narysowanie koszyka oraz obsluge stage'y
+	 * obsluguje ona rowniez przechodzenie uzytkownika na nastepne poziomy, koniec gry, menu pauzy czy nowa gre
+	 */
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor( 0, 1, 0, 1 );
@@ -143,7 +167,7 @@ public class Gra extends ApplicationAdapter {
 
 		switch (state)
 		{
-			case 1:
+			case 1: // uzytkownik gra w gre
 				if (level <= 10)
 				{
 					over();
@@ -160,7 +184,7 @@ public class Gra extends ApplicationAdapter {
 					font.draw(batch, "Poziom: "+level+"", 350, 50);
 
 					batch.end();
-
+					//logika odpowiedzialna za koniec gry, nastepne poziomy
 					if(health <= 0)
 					{
 						state = 5;
@@ -185,17 +209,17 @@ public class Gra extends ApplicationAdapter {
 				}
 				break;
 
-			case 2:
+			case 2: //menu pauzy
 				pause.draw();
 				Gdx.input.setInputProcessor(pause);
 				break;
 
-			case 3:
+			case 3: //glowne menu gry
 				menu.draw();
 				Gdx.input.setInputProcessor(menu);
 				break;
 
-			case 4:
+			case 4: //ekran nastepnego poziomu
 				next.draw();
 				Gdx.input.setInputProcessor(next);
 				next_level();
@@ -203,7 +227,7 @@ public class Gra extends ApplicationAdapter {
 				lista.clear();
 				break;
 
-			case 5:
+			case 5: //ekran konca gry
 				menu.draw();
 				Gdx.input.setInputProcessor(menu);
 				ending();
@@ -211,7 +235,7 @@ public class Gra extends ApplicationAdapter {
 				lista.clear();
 				break;
 
-			case 6:
+			case 6: //nowa gra
 				start();
 				remov.clear();
 				lista.clear();
@@ -223,9 +247,13 @@ public class Gra extends ApplicationAdapter {
 		}
 	}
 
+	/**
+	 * metoda obslugujaca poruszanie sie koszykiem
+	 * losuje ona rowniez nastepny obiekt ktory pojawi sie na ekranie
+	 */
 	private void update()
 	{
-		if(Gdx.input.isKeyPressed(Input.Keys.A) && koszyk.x > 0 )
+		if(Gdx.input.isKeyPressed(Input.Keys.A) && koszyk.x > 0 ) //poruszanie sie koszykiem
 		{
 			koszyk.x -= move;
 		}
@@ -236,7 +264,7 @@ public class Gra extends ApplicationAdapter {
 		}
 
 		timer += Gdx.graphics.getDeltaTime();
-		if(timer > czas)
+		if(timer > czas) //losowanie nastepnego obiektu
 		{
 			boolean healthy = MathUtils.random(100 ) <= 66;
 			Texture texture;
@@ -253,7 +281,7 @@ public class Gra extends ApplicationAdapter {
 		}
 
 	}
-	
+
 	@Override
 	public void dispose () {
 		batch.dispose();

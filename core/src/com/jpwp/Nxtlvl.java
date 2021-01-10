@@ -11,6 +11,10 @@ public class Nxtlvl extends Stage {
 
     TextButton button4, button5, button6;
 
+    /**
+     * ustawienie wszystkich potrzebnych informacji na ekranie
+     * @param texture tekstura ktora bedzie uzywana przez program jako tlo
+     */
     public Nxtlvl(Texture texture)
     {
         Table table = new Table();
@@ -20,7 +24,7 @@ public class Nxtlvl extends Stage {
 
         table.add(background);
         addActor(table);
-
+        //ustawienie tekstu wszystkich guzikow
         Skin mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
         Button button1 = new TextButton("Nastepny poziom",mySkin,"small");
         Button button2 = new TextButton("Nowa gra",mySkin,"small");
@@ -28,6 +32,7 @@ public class Nxtlvl extends Stage {
         button4 = new TextButton("Twoj wynik: "+Gra.total_score+"",mySkin,"small");
         button5 = new TextButton("Zycia: "+ Gra.health +"",mySkin,"small");
         button6 = new TextButton("Poziom: "+ Gra.level +"",mySkin,"small");
+        //ustawienie pozycji guzikow
         button1.setSize(200,50);
         button1.setPosition(540,400);
         button2.setSize(100,50);
@@ -43,7 +48,7 @@ public class Nxtlvl extends Stage {
         button1.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
-            {
+            { //przejscie do nastepnego poziomu
                 if (Gra.level < 10 )
                 {
                     Gra.state = 1;
@@ -62,7 +67,7 @@ public class Nxtlvl extends Stage {
         button2.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
-            {
+            { //wlaczenie nowej gry
 
                 Gra.state = 6;
             }
@@ -70,7 +75,7 @@ public class Nxtlvl extends Stage {
         button3.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
-            {
+            { //wyjscie z programu
                 System.exit(0);
             }
         });
@@ -81,6 +86,10 @@ public class Nxtlvl extends Stage {
         addActor(button5);
         addActor(button6);
     }
+
+    /**
+     * narysowanie wszystkich tekstur i aktualizacja tekstu guzikow
+     */
     @Override
     public void draw()
     {

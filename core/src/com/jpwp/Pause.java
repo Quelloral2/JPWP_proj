@@ -11,7 +11,10 @@ public class Pause extends Stage {
 
     TextButton button4, button5, button6;
 
-
+    /**
+     * ustawienie tla i guzikow w menu pauzy
+     * @param texture tekstura tla
+     */
     public Pause(Texture texture)
     {
         Table table = new Table();
@@ -20,6 +23,7 @@ public class Pause extends Stage {
         Image background = new Image(texture);
         table.add(background);
         addActor(table);
+        //ustawienie tekstu i wygladu guzikow
         Skin mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
         Button button1 = new TextButton("Kontynuuj",mySkin,"small");
         Button button2 = new TextButton("Nowa gra",mySkin,"small");
@@ -27,6 +31,7 @@ public class Pause extends Stage {
         button4 = new TextButton("Twoj wynik: "+Gra.total_score+"",mySkin,"small");
         button5 = new TextButton("Zycia: "+ Gra.health +"",mySkin,"small");
         button6 = new TextButton("Poziom: "+ Gra.level +"",mySkin,"small");
+        //ustawienie pozycji guzikow na ekranie
         button1.setSize(100,50);
         button1.setPosition(590,400);
         button2.setSize(100,50);
@@ -45,18 +50,18 @@ public class Pause extends Stage {
             {
                 Gra.state = 1;
             }
-        });
+        }); //kontynuacja gry
         button2.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
             {
                 Gra.state = 6;
             }
-        });
+        }); //nowa gra
         button3.addListener(new ChangeListener()
         {
             public void changed (ChangeEvent event, Actor actor)
-            {
+            {                    // wyjscie z programu
                 System.exit(0);
             }
         });
@@ -67,6 +72,10 @@ public class Pause extends Stage {
         addActor(button5);
         addActor(button6);
     }
+
+    /**
+     * narysowanie wszystkich potrzebnych obiektow i aktualizacja tekstu guzikow
+     */
     @Override
     public void draw()
     {

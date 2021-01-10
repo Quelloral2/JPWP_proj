@@ -8,6 +8,12 @@ public class Collision extends Rectangle {
 
     private Texture texture;
 
+    /**
+     * metoda sluzaca do ustalenia szerokosci i wysokosci obiektu
+     * @param texture tekstura ktora dany obiekt uzywa
+     * @param x szerokosc tekstury
+     * @param y wysokosc tekstury
+     */
     public Collision(Texture texture, float x , float y)
     {
         super();
@@ -18,15 +24,19 @@ public class Collision extends Rectangle {
         this.height = texture.getHeight();
     }
 
+    /**
+     * metoda do inicjalizacji tekstur obiektow do ktorych nie potrzeba ustalac szerokosci i wysokosci
+     * @param texture tekstura obiektu
+     */
     public Collision(Texture texture)
     {
         this(texture, 0,0);
     }
-    public Texture getTexture()
-    {
-        return texture;
-    }
 
+    /**
+     * metoda sluzaca do rysowania obiektu
+     * @param batch narysowanie obiektu wraz z jego tekstura
+     */
     public void draw(SpriteBatch batch){
         batch.draw(texture, x, y);
     }

@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class Game extends Stage {
-
+    /**
+     * metoda do ustawienia na ekranie przycisku przenoszacego gracza do menu i jego dzialania
+     */
     public Game()
     {
         Skin mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
@@ -22,10 +24,14 @@ public class Game extends Stage {
             {
                 Gra.state = 2;
             }
-        });
+        }); //wyswietlenie menu i zatrzymanie gry
         addActor(button);
 
     }
+
+    /**
+     * metoda do rysowania przycisku na ekranie
+     */
     @Override
     public void draw()
     {
