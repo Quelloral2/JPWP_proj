@@ -200,7 +200,7 @@ public class Gra extends ApplicationAdapter {
 					{
 						state = 7;
 					}
-					else if (score>1)
+					else if (score>=20)
 					{
 						if(level < 10)
 						{
