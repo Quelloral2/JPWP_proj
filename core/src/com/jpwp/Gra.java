@@ -77,8 +77,8 @@ public class Gra extends ApplicationAdapter {
 	{
 		score = 0;
 		streak = 0;
-		health = 1;
-		level = 10;
+		health = 3;
+		level = 1;
 		total_score = 0;
 		czas = 1.5;
 		move = 15;
