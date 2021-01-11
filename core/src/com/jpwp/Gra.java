@@ -120,7 +120,7 @@ public class Gra extends ApplicationAdapter {
 	public void koniec()
 	{
 		batch.begin();
-		font.draw(batch, "Tym razem ci się nie udało, spróbuj ponownie", 500, 550);
+		font.draw(batch, "Tym razem ci sie nie udalo, spróbuj ponownie", 500, 550);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
 		batch.end();
 	}
