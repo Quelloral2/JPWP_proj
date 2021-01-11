@@ -77,8 +77,8 @@ public class Gra extends ApplicationAdapter {
 	{
 		score = 0;
 		streak = 0;
-		health = 3;
-		level = 1;
+		health = 1;
+		level = 10;
 		total_score = 0;
 		czas = 1.5;
 		move = 15;
@@ -104,12 +104,23 @@ public class Gra extends ApplicationAdapter {
 	}
 
 	/**
-	 * wyswietlenie informacji o zakonczeniu gry
+	 * wyswietlenie informacji o ukonczeniu gry
 	 */
 	public void ending()
 	{
 		batch.begin();
-		font.draw(batch, "Ukonczyles gre, gratulacje!", 600, 600);
+		font.draw(batch, "Ukonczyles gre, gratulacje!", 550, 550);
+		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
+		batch.end();
+	}
+
+	/**
+	 * wyswietlenie informacji o przegranej
+	 */
+	public void koniec()
+	{
+		batch.begin();
+		font.draw(batch, "Tym razem ci się nie udało, spróbuj ponownie", 500, 550);
 		font.draw(batch, "Twoj wynik: "+total_score+"", 600, 500);
 		batch.end();
 	}
@@ -187,9 +198,9 @@ public class Gra extends ApplicationAdapter {
 					//logika odpowiedzialna za koniec gry, nastepne poziomy
 					if(health <= 0)
 					{
-						state = 5;
+						state = 7;
 					}
-					else if (score>19)
+					else if (score>1)
 					{
 						if(level < 10)
 						{
@@ -240,6 +251,14 @@ public class Gra extends ApplicationAdapter {
 				remov.clear();
 				lista.clear();
 				state = 1;
+				break;
+
+			case 7:
+				menu.draw();
+				Gdx.input.setInputProcessor(menu);
+				koniec();
+				remov.clear();
+				lista.clear();
 				break;
 			default:
 				state = 3;
